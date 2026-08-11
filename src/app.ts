@@ -8,5 +8,3 @@ const port = 3026
 app.listen(port, () =>{
     console.log(`Server is running on port ${port}`)
 } )
-
-console.log("Hola mundo")
