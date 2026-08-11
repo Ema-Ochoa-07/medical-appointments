@@ -16,13 +16,26 @@ const port = 3026
     })
 
     
-    app.post('/', (req, res)=>{
+    app.post('/', (req: Request, res: Response)=>{
         console.log(req.body)
         res.json({
             message: 'El especialista fue creado satisfactoriamente',
             data:req.body
         })
     })
+
+
+    app.get('/:id',(req, res) =>{
+
+        const {id} = req.params        
+
+        res.json({
+            message: 'Especialista encontrado',
+            id: id
+        })
+    })
+
+
 
     
 app.listen(port, () =>{
