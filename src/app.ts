@@ -53,6 +53,22 @@ const port = 3026
 
     */
 
+    app.patch('/:id',(req: Request, res: Response) =>{
+        const { id } = req.params 
+        res.json({
+            message:'El especialista se actualizó correctamente',
+            data: req.body
+        })
+    })
+
+     app.delete('/:id',(req: Request, res: Response) =>{
+        const { id } = req.params 
+        res.json({
+            message:'El especialista se eliminó correctamente',
+            data: req.body
+        })
+    })
+
 
 
     
