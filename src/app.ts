@@ -35,6 +35,24 @@ const port = 3026
         })
     })
 
+    /* VARIOS PARÁMETROS
+    CUANDO VA EL : Significa que parámetro es variable
+    SI NO VA EL : El parámetro que esé es fijo
+
+    app.get('/:id/name/:edad',(req, res) =>{
+
+        const {id, name, edad} = req.params        
+
+        res.json({
+            message: 'Especialista encontrado',
+            id: id,
+            name: name,
+            edad: edad
+        })
+    })
+
+    */
+
 
 
     
