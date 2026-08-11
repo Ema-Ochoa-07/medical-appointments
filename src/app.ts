@@ -18,7 +18,7 @@ const port = 3026
     
     app.post('/', (req: Request, res: Response)=>{
         console.log(req.body)
-        res.json({
+        res.status(201).json({
             message: 'El especialista fue creado satisfactoriamente',
             data:req.body
         })
@@ -63,10 +63,7 @@ const port = 3026
 
      app.delete('/:id',(req: Request, res: Response) =>{
         const { id } = req.params 
-        res.json({
-            message:'El especialista se eliminó correctamente',
-            data: req.body
-        })
+        res.status(204).json()
     })
 
 
