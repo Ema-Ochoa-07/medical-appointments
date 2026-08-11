@@ -18,7 +18,10 @@ const port = 3026
     
     app.post('/', (req, res)=>{
         console.log(req.body)
-        res.send("Method Post")
+        res.json({
+            message: 'El especialista fue creado satisfactoriamente',
+            data:req.body
+        })
     })
 
     
