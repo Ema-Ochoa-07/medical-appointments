@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { PatientsRoutes } from "./patients/route";
+import { SpecialtiesRoutes } from "./specialties/route";
 
 export class AppRoutes{
 
@@ -11,15 +12,19 @@ export class AppRoutes{
         
         //RUTAS PACIENTES
         router.use('/api/v1/patients', PatientsRoutes.routes)
-                 
+
+        //RUTAS ESPECIALIDAD
+        router.use('/api/v1/specialties', SpecialtiesRoutes.routes)
          
         //RUTAS ESPECIALISTA
-        //RUTAS ESPECIALIDAD
+        router.use('/api/v1/specialists', SpecialtiesRoutes.routes)
+
+        
         //RUTAS CONSULTORIO
         //RUTAS EPSs
         //RUTAS CITAS
         //RUTAS CE ESPERA FACTURACIÓN
-       //RUTAS CE ESPERA POR CONSULTA
+        //RUTAS CE ESPERA POR CONSULTA
         //RUTAS URG ESPERA POR TIRAGE
         //RUTAS URG ESPERA POR CONSULTA
         //RUTAS ROLES
