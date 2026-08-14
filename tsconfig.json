@@ -32,8 +32,10 @@
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
+    /*AGREGAR 3 PROPIEDADES MÁS A ESTE ARCHIVO tsconfig.ts*/
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "strictPropertyInitialization":false,
 
     // Recommended Options
     "strict": true,
