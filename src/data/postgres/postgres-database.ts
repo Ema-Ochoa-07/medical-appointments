@@ -21,7 +21,8 @@ export class PostgresDatabase{
             database: options.database,
             //entities
 
-            synchronize: true   // En producción no se recomienda SYNCRHONIZE sino migraciones
+            synchronize: true,   // En producción no se recomienda SYNCRHONIZE sino migraciones
+            //ssl:{rejectUnauthorized: false}   SE UTILIZA PAR REALIZAR CONEXIONES WEB DE BASES DE DATOS
         })
     }
 
