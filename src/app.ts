@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { AppRoutes } from "./presentation/routes"
 import { Server } from "./presentation/server"
 
