@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm";
+import { Patient } from "./models/patient.model";
 
 interface Options {
     host: string,
@@ -19,7 +20,7 @@ export class PostgresDatabase{
             username: options.username,
             password: options.password,        
             database: options.database,
-            //entities
+            entities:[Patient],
 
             synchronize: true,   // En producción no se recomienda SYNCRHONIZE sino migraciones
             //ssl:{rejectUnauthorized: false}   SE UTILIZA PAR REALIZAR CONEXIONES WEB DE BASES DE DATOS

@@ -97,13 +97,6 @@ export class Patient extends BaseEntity{
 
 
 
-    @Column({
-        type:"datetime"   
-    })
-    fecha_creacion: Date //PENDIENTE
-
-
-
     @CreateDateColumn()
     created_at: Date
 
