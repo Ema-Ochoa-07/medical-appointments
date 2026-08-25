@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PatientService } from "../services/patient.service";
+import { error } from "node:console";
 
 export class PatientsController{
     
@@ -9,13 +10,25 @@ export class PatientsController{
 
     createPatients = (req: Request, res: Response) => {
         
-        const {documento, tipo_doc, nombres, apellidos} = req.body        
+        const {
+            documento, tipo_doc, nombres, apellidos,
+            fecha_nac, genero, telefono, direccion, correo
+        } = req.body        
+         
+        this.patientService.createPatient({documento, tipo_doc, nombres, apellidos,
+             fecha_nac, genero, telefono, direccion, correo
+        })
 
-        this.patientService.createPatient('Se creó el paciente')
-
-        return res.status(201).json({documento, tipo_doc, nombres, apellidos})
+        // POR OBTIMIZACIÓN SE EVITA ASYN-AWAIT
+        // POR SI LLEGA A PASAR ALGO QUE NO CONTROLE Y FALLE
+        .then(patient => {
+            return res.status(201).json(patient)
+        })
+         .catch ((error) => {
+            return res.status(500).json(error)
+        })
     }
-
+     
 
      getPatients = (req: Request, res: Response) => {
                 
