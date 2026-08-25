@@ -28,23 +28,75 @@ export class PatientsController{
             return res.status(500).json(error)
         })
     }
-     
+
+    
+
 
      getPatients = (req: Request, res: Response) => {
-                
-        return res.status(200).json({message:'Listado de pacientes'})
+
+        this.patientService.getAllPatients()
+         
+        .then(patients =>{
+            return res.status(200).json(patients)
+        })
+        .catch((error) => {
+            return res.status(500).json(error)
+        })
     }
+
+
 
     getPatientById = (req: Request, res: Response) =>{
         const {id} = req.params
-        return res.status(200).json({message:`Paciente con id ${id} encontrado`})
+
+        //if( !id|| isNaN(+id)){ una forma de validad de que sea Número
+        if(isNaN(Number(id))){
+            return res.status(400).json({message:`El id debe ser un número`})
+        }
+
+        this.patientService.getPatientById(Number(id))
+        .then(patient => {
+            console.log(patient)
+            return res.status(200).json(patient)
+        })
+
+        .catch((error) =>{
+            console.log(error)
+            return res.status(500).json(error)
+        })
     }
+
+
+
 
     updatePatientById = (req: Request, res: Response) =>{
         const {id} = req.params
-        const {documento, tipo_doc, nombres, apellidos} = req.body
-        return res.status(200).json({messge:`Paaciente con id ${id} actualizado`})
+        if(isNaN(Number(id))){
+            return res.status(400).json('El id debe ser un número')
+        }
+
+        const {
+            documento, tipo_doc, nombres, apellidos,
+            fecha_nac, genero, telefono, direccion, correo
+        } = req.body   
+        
+        this.patientService.updatePatient( Number(id), {documento, tipo_doc, nombres, apellidos,
+             fecha_nac, genero, telefono, direccion, correo })
+
+        .then(patient => {
+            console.log(patient)
+            return res.status(200).json(patient)
+        })
+
+        .catch((error) =>{
+            console.log(error)
+            return res.status(500).json(error)
+        })
+
     }
+
+
+
 
     deletePatientById = (req: Request, res: Response) =>{
         const {id} = req.params
