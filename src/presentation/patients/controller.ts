@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
+import { PatientService } from "../services/patient.service";
 
 export class PatientsController{
     
-    consturctor(){}
+    constructor(
+        public readonly patientService: PatientService
+    ){}
 
     createPatients = (req: Request, res: Response) => {
         
         const {documento, tipo_doc, nombres, apellidos} = req.body        
+
+        this.patientService.createPatient('Se creó el paciente')
+
         return res.status(201).json({documento, tipo_doc, nombres, apellidos})
     }
 

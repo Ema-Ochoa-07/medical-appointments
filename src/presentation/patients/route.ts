@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { PatientsController } from "./controller";
+import { PatientService } from "../services/patient.service";
 
 export class PatientsRoutes{
     
     static get routes(): Router{
         
         const router = Router()
-        const controller = new PatientsController()
+
+        const patientService = new PatientService()
+        const controller = new PatientsController(patientService)
 
         //RUTAS PACIENTE
         router.post('', controller.createPatients)
