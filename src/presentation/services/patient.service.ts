@@ -1,6 +1,10 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { Patient } from "../../data"
 
+enum Estado{
+    Activo = 'Activo',
+    Inactivo = 'Inactivo'
+}
 
 export class PatientService {
     constructor(){}
@@ -37,7 +41,11 @@ export class PatientService {
 
     async getAllPatients(){
         try {
-            return  await Patient.find()
+            return  await Patient.find({
+                where:{
+                    estado: Estado.Activo
+                }
+            })
         } catch (error) {
             return console.log(error)
         }
@@ -48,7 +56,8 @@ export class PatientService {
         try {
             const patient = await Patient.findOne({
                 where:{
-                    id: id
+                    id: id,
+                    estado: Estado.Activo
                 }                
             })
             
@@ -74,13 +83,36 @@ export class PatientService {
             patient.telefono = patientData.telefono.toLowerCase().trim()
             patient.direccion = patientData.direccion.toLowerCase().trim()
             patient.email = patientData.correo
+            patient.estado = patientData.estado
 
-        try {                     
+        try {             
+            if(!patient){
+                throw new Error("El paciente no existe")
+            }   
             return await patient.save()
 
         } catch (error) {
             throw new Error("Internal Server Error")
         }
+    }
+
+
+    async deletePatient(id: number){
+        const patient = await this.getPatientById(id)
+
+        patient.estado = Estado.Inactivo
+
+        try {
+            if(!patient){
+                throw new Error("No existe un paciente con ese id")
+        }
+
+        return await patient.save()
+
+        } catch (error) {
+            throw new Error("Internal Server Error")
+        }
+
     }
 
 }

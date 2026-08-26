@@ -77,11 +77,11 @@ export class PatientsController{
 
         const {
             documento, tipo_doc, nombres, apellidos,
-            fecha_nac, genero, telefono, direccion, correo
+            fecha_nac, genero, telefono, direccion, correo, estado
         } = req.body   
         
         this.patientService.updatePatient( Number(id), {documento, tipo_doc, nombres, apellidos,
-             fecha_nac, genero, telefono, direccion, correo })
+             fecha_nac, genero, telefono, direccion, correo, estado })
 
         .then(patient => {
             console.log(patient)
@@ -100,6 +100,19 @@ export class PatientsController{
 
     deletePatientById = (req: Request, res: Response) =>{
         const {id} = req.params
-        return res.status(204).json()
+
+        if(isNaN(Number(id))){
+            return res.status(400).json({message:"El id debe ser un número"})
+        }
+
+        this.patientService.deletePatient(Number(id))
+
+        .then(() =>{
+            return res.status(204).json()
+        })
+        .catch((error) =>{
+            return res.status(500).json(error)
+        })
+
     }
 }

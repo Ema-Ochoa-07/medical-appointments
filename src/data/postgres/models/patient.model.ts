@@ -13,6 +13,11 @@ enum Genero{
     Otro = 'Otro'
 }
 
+enum Estado{
+    Activo = 'Activo',
+    Inactivo = 'Inactivo'
+}
+
 
 @Entity()
 
@@ -94,6 +99,14 @@ export class Patient extends BaseEntity{
         type:"varchar"
     })
     email: string
+
+
+        @Column({
+        nullable: false,
+        enum: Estado,
+        default: Estado.Activo
+    })
+    estado: Estado
 
 
 
