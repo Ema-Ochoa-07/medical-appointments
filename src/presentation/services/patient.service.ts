@@ -1,5 +1,6 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { Patient } from "../../data"
+import { CustomError } from "../../domain"
 
 enum Estado{
     Activo = 'Activo',
@@ -12,9 +13,10 @@ export class PatientService {
     
     //Luego hay que cambiar ese tipo de dato any
     async createPatient(patientData: any){
+        //COSAS DENTRO Y FUERAS DE TRY-CATCH ASYNC - SINCRONO
 
-        try {
-            
+        //CÓDIGO SINCRONO - INSTANCIAR CLASES, ALAMACENAR EN VARIABLE
+
         //console.log("Se ejecutó el service")
         const patient = new Patient()
 
@@ -28,12 +30,13 @@ export class PatientService {
         patient.direccion = patientData.direccion.toLowerCase().trim()
         patient.email = patientData.correo
 
-        await patient.save()
-
-        return patient
+        try {
+        //CÓDIGO ASÍNCRONO - GUARDADO DE BD               
+        return patient.save()
 
         } catch (error) {
-            console.log(error)//TODO: Ojo luego agregar manejo de ERRORES
+            //SI LA EJECUCIÓN FALLA ES UN ERROR  500
+            throw CustomError.internalServer("Internal Server Error 🧨")
         }
 
     }
@@ -47,29 +50,27 @@ export class PatientService {
                 }
             })
         } catch (error) {
-            return console.log(error)
+            throw CustomError.internalServer("Internal Server Error 🧨")
         }
     }
 
 
     async getPatientById(id: number){
-        try {
-            const patient = await Patient.findOne({
-                where:{
-                    id: id,
-                    estado: Estado.Activo
-                }                
-            })
+        //EVITAR EL TRY CATCH LO MÁS QUE SE PUEDA POR OPTIMIZACIÓN
+
+        const patient = await Patient.findOne({
+            where:{
+                id: id,
+                estado: Estado.Activo
+            }                
+        })
             
-            if(!patient){
-                throw new Error("El paciente no existe")
-            }
-            return patient
-        } catch (error) {
-            throw new Error("Internal Server Error")
-            console.log(error)
+        if(!patient){
+            throw CustomError.notFound(`Patient with id ${id} not found`)
         }
+        return patient
     }
+
 
     async updatePatient(id: number, patientData: any){
             const patient = await this.getPatientById(id)
@@ -86,13 +87,10 @@ export class PatientService {
             patient.estado = patientData.estado
 
         try {             
-            if(!patient){
-                throw new Error("El paciente no existe")
-            }   
             return await patient.save()
 
         } catch (error) {
-            throw new Error("Internal Server Error")
+            throw CustomError.internalServer("Internal Server Error 🧨")
         }
     }
 
@@ -102,15 +100,11 @@ export class PatientService {
 
         patient.estado = Estado.Inactivo
 
-        try {
-            if(!patient){
-                throw new Error("No existe un paciente con ese id")
-        }
-
+        try {            
         return await patient.save()
 
         } catch (error) {
-            throw new Error("Internal Server Error")
+            throw CustomError.internalServer("Internal Server Error 🧨")
         }
 
     }

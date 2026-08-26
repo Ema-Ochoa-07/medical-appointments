@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PatientService } from "../services/patient.service";
 import { error } from "node:console";
+import { CustomError } from "../../domain";
 
 export class PatientsController{
     
@@ -25,7 +26,11 @@ export class PatientsController{
             return res.status(201).json(patient)
         })
          .catch ((error) => {
-            return res.status(500).json(error)
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
     }
 
@@ -39,8 +44,12 @@ export class PatientsController{
         .then(patients =>{
             return res.status(200).json(patients)
         })
-        .catch((error) => {
-            return res.status(500).json(error)
+         .catch ((error) => {
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
     }
 
@@ -60,9 +69,12 @@ export class PatientsController{
             return res.status(200).json(patient)
         })
 
-        .catch((error) =>{
+         .catch ((error) => {
             console.log(error)
-            return res.status(500).json(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
     }
 
@@ -88,9 +100,12 @@ export class PatientsController{
             return res.status(200).json(patient)
         })
 
-        .catch((error) =>{
+         .catch ((error) => {
             console.log(error)
-            return res.status(500).json(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
 
     }
@@ -110,8 +125,12 @@ export class PatientsController{
         .then(() =>{
             return res.status(204).json()
         })
-        .catch((error) =>{
-            return res.status(500).json(error)
+         .catch ((error) => {
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
 
     }
