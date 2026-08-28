@@ -11,6 +11,13 @@ export class PatientService {
     constructor(){}
     
     
+
+        /**
+     * @Description Este método crea un paciente
+     * @param patientData este es el objeto que contiene los datos del paciente
+     * @returns retorna el paciente creado, retorna una instancia del modelo  patient
+     * @errors Internal server
+     */
     //Luego hay que cambiar ese tipo de dato any
     async createPatient(patientData: any){
         //COSAS DENTRO Y FUERAS DE TRY-CATCH ASYNC - SINCRONO
@@ -42,6 +49,12 @@ export class PatientService {
     }
 
 
+
+    /**
+     * @Description Este método devuelve una promesa con todos los pacientes
+     * @returns retorna un listado de pacientes activos
+     * @errors Internal server
+     */
     async getAllPatients(){
         try {
             return  await Patient.find({
@@ -55,6 +68,13 @@ export class PatientService {
     }
 
 
+
+    /**
+     * @Description Este método devuelve una promesa con el paciente por id
+     * @param id del del paciente que se quiere buscar
+     * @returns Retorna al paciente activo buscado por id
+     * @errors not found patient,  internal server
+     */
     async getPatientById(id: number){
         //EVITAR EL TRY CATCH LO MÁS QUE SE PUEDA POR OPTIMIZACIÓN
 
@@ -72,6 +92,14 @@ export class PatientService {
     }
 
 
+
+    /**
+     * @Description Este método actualiza un paciente
+     * @param id del del paciente que se quiere actualizar
+     * @param patientData este es el objeto que contiene los datos del paciente
+     * @returns retorna al paciente actualizado, retorna una instancia del modelo  patient
+     * @errors not found patient,  internal server
+     */
     async updatePatient(id: number, patientData: any){
             const patient = await this.getPatientById(id)
 
@@ -94,6 +122,12 @@ export class PatientService {
         }
     }
 
+
+    /**
+     * @Description Este método elimina un paciente
+     * @param id del del paciente que se quiere eliminar
+     * @errors not found patient,  internal server
+     */
 
     async deletePatient(id: number){
         const patient = await this.getPatientById(id)
