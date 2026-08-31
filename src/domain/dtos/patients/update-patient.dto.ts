@@ -31,7 +31,7 @@ export class UpdatePatientDto {
         public readonly estado: Estado
     ){}
 
-    static update(object: {[key: string]: any}): [string | undefined, UpdatePatientDto?]{
+    static update (object: {[key: string]: any}): [string | undefined, UpdatePatientDto?]{
         const {
             numero_documento, tipo_documento, nombres, 
             apellidos, fecha_nacimiento, genero, telefono, 

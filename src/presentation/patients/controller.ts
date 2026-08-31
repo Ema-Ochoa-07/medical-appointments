@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { PatientService } from "../services/patient.service";
-import { CreatePatientDto, CustomError } from "../../domain";
-import { UpdatePatientDto } from "../../domain/dtos/patients/update-patient.dto";
-import { json } from "node:stream/consumers";
+import { CreatePatientDto, CustomError, UpdatePatientDto } from "../../domain";
 
 export class PatientsController{
     
@@ -88,7 +86,7 @@ export class PatientsController{
         const [error, updatePatientDto] = UpdatePatientDto.update(req.body)
         if( error) return res.status(422).json({message: error})
          
-        this.patientService.updatePatient( Number(id), updatePatientDto)
+        this.patientService.updatePatient( Number(id), updatePatientDto!)
 
         .then(patient => {
             console.log(patient)

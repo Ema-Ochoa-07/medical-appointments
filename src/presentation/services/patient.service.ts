@@ -1,6 +1,6 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { Patient } from "../../data"
-import { CreatePatientDto, CustomError } from "../../domain"
+import { CreatePatientDto, CustomError, UpdatePatientDto } from "../../domain"
 
 enum Estado{
     Activo = 'Activo',
@@ -101,18 +101,18 @@ export class PatientService {
      * @returns retorna al paciente actualizado, retorna una instancia del modelo  patient
      * @errors not found patient,  internal server
      */
-    async updatePatient(id: number, patientData: any){
+    async updatePatient(id: number, patientData: UpdatePatientDto){
             const patient = await this.getPatientById(id)
 
-            patient.numero_documento = patientData.documento
-            patient.tipo_documento = patientData.tipo_doc
+            patient.numero_documento = patientData.numero_documento
+            patient.tipo_documento = patientData.tipo_documento
             patient.nombres = patientData.nombres.toLowerCase().trim()
             patient.apellidos = patientData.apellidos.toLowerCase().trim()
-            patient.fecha_nacimiento = patientData.fecha_nac
+            patient.fecha_nacimiento = patientData.fecha_nacimiento
             patient.genero = patientData.genero
             patient.telefono = patientData.telefono.toLowerCase().trim()
             patient.direccion = patientData.direccion.toLowerCase().trim()
-            patient.email = patientData.correo
+            patient.email = patientData.email
             patient.estado = patientData.estado
 
         try {             
