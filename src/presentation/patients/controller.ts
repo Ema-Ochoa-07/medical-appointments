@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { PatientService } from "../services/patient.service";
-import { error } from "node:console";
-import { CustomError } from "../../domain";
+import { CreatePatientDto, CustomError } from "../../domain";
 
 export class PatientsController{
     
@@ -11,14 +10,11 @@ export class PatientsController{
 
     createPatients = (req: Request, res: Response) => {
         
-        const {
-            documento, tipo_doc, nombres, apellidos,
-            fecha_nac, genero, telefono, direccion, correo
-        } = req.body        
+        
+        const [error, createPatientDto] = CreatePatientDto.create(req.body)
+        if( error ) return res.status(422).json({message:error})
          
-        this.patientService.createPatient({documento, tipo_doc, nombres, apellidos,
-             fecha_nac, genero, telefono, direccion, correo
-        })
+        this.patientService.createPatient(createPatientDto!)
 
         // POR OBTIMIZACIÓN SE EVITA ASYN-AWAIT
         // POR SI LLEGA A PASAR ALGO QUE NO CONTROLE Y FALLE

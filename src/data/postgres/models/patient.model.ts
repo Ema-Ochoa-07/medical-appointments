@@ -71,6 +71,7 @@ export class Patient extends BaseEntity{
 
 
     @Column({
+        nullable:false,
         enum:Genero
     })
     genero: Genero
@@ -78,7 +79,6 @@ export class Patient extends BaseEntity{
 
     
     @Column({
-        nullable:false,
         length:20,
         type:"varchar"  
     })

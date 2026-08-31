@@ -1,6 +1,6 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { Patient } from "../../data"
-import { CustomError } from "../../domain"
+import { CreatePatientDto, CustomError } from "../../domain"
 
 enum Estado{
     Activo = 'Activo',
@@ -19,7 +19,7 @@ export class PatientService {
      * @errors Internal server
      */
     //Luego hay que cambiar ese tipo de dato any
-    async createPatient(patientData: any){
+    async createPatient(patientData: CreatePatientDto){
         //COSAS DENTRO Y FUERAS DE TRY-CATCH ASYNC - SINCRONO
 
         //CÓDIGO SINCRONO - INSTANCIAR CLASES, ALAMACENAR EN VARIABLE
@@ -27,15 +27,15 @@ export class PatientService {
         //console.log("Se ejecutó el service")
         const patient = new Patient()
 
-        patient.numero_documento = patientData.documento
-        patient.tipo_documento = patientData.tipo_doc
+        patient.numero_documento = patientData.numero_documento
+        patient.tipo_documento = patientData.tipo_documento
         patient.nombres = patientData.nombres.toLowerCase().trim()
         patient.apellidos = patientData.apellidos.toLowerCase().trim()
-        patient.fecha_nacimiento = patientData.fecha_nac
+        patient.fecha_nacimiento = patientData.fecha_nacimiento
         patient.genero = patientData.genero
         patient.telefono = patientData.telefono.toLowerCase().trim()
         patient.direccion = patientData.direccion.toLowerCase().trim()
-        patient.email = patientData.correo
+        patient.email = patientData.email
 
         try {
         //CÓDIGO ASÍNCRONO - GUARDADO DE BD               
