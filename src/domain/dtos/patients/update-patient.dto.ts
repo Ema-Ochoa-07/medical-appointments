@@ -11,8 +11,13 @@ enum Genero {
     Otro = 'Otro'
 }
 
+enum Estado{
+    Activo = 'Activo',
+    Inactivo = 'Inactivo'
+}
 
-export class CreatePatientDto {
+
+export class UpdatePatientDto {
     private constructor(
         public readonly numero_documento: string,
         public readonly tipo_documento: Tipo_documento,
@@ -22,14 +27,15 @@ export class CreatePatientDto {
         public readonly genero: Genero,
         public readonly telefono: string,
         public readonly direccion: string,
-        public readonly email: string
+        public readonly email: string,
+        public readonly estado: Estado
     ){}
 
-    static create(object: {[key: string]: any}): [string | undefined, CreatePatientDto?]{
+    static update(object: {[key: string]: any}): [string | undefined, UpdatePatientDto?]{
         const {
             numero_documento, tipo_documento, nombres, 
             apellidos, fecha_nacimiento, genero, telefono, 
-            direccion, email
+            direccion, email, estado
         } = object
 
 
@@ -45,9 +51,10 @@ export class CreatePatientDto {
         if( direccion.length > 15 ) return ['La dirección exede los 15 caracteres permitidos']
 
         if(!email) return ['Falta el email']   
+        if(!estado) return ['Falta el email']
         
-        return [undefined, new CreatePatientDto(numero_documento, tipo_documento, nombres,
-            apellidos, fecha_nacimiento, genero, telefono, direccion, email )]
+        return [undefined, new UpdatePatientDto(numero_documento, tipo_documento, nombres,
+            apellidos, fecha_nacimiento, genero, telefono, direccion, email, estado )]
     }
 
 }

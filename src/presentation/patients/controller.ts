@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { PatientService } from "../services/patient.service";
 import { CreatePatientDto, CustomError } from "../../domain";
+import { UpdatePatientDto } from "../../domain/dtos/patients/update-patient.dto";
+import { json } from "node:stream/consumers";
 
 export class PatientsController{
     
@@ -83,13 +85,10 @@ export class PatientsController{
             return res.status(400).json('El id debe ser un número')
         }
 
-        const {
-            documento, tipo_doc, nombres, apellidos,
-            fecha_nac, genero, telefono, direccion, correo, estado
-        } = req.body   
-        
-        this.patientService.updatePatient( Number(id), {documento, tipo_doc, nombres, apellidos,
-             fecha_nac, genero, telefono, direccion, correo, estado })
+        const [error, updatePatientDto] = UpdatePatientDto.update(req.body)
+        if( error) return res.status(422).json({message: error})
+         
+        this.patientService.updatePatient( Number(id), updatePatientDto)
 
         .then(patient => {
             console.log(patient)

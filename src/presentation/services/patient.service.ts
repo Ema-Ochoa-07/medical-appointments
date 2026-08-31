@@ -35,6 +35,7 @@ export class PatientService {
         patient.genero = patientData.genero
         patient.telefono = patientData.telefono.toLowerCase().trim()
         patient.direccion = patientData.direccion.toLowerCase().trim()
+        
         patient.email = patientData.email
 
         try {
