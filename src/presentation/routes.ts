@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { PatientsRoutes } from "./patients/route";
 import { SpecialtiesRoutes } from "./specialties/route";
+import { UsersRoutes } from "./users/route";
 
 export class AppRoutes{
 
@@ -12,6 +13,9 @@ export class AppRoutes{
         
         //RUTAS PACIENTES
         router.use('/api/v1/patients', PatientsRoutes.routes)
+
+        //RUTAS USURAIOS
+        router.use('/api/v1/users', UsersRoutes.routes)
 
         //RUTAS ESPECIALIDAD
         router.use('/api/v1/specialties', SpecialtiesRoutes.routes)
@@ -28,7 +32,6 @@ export class AppRoutes{
         //RUTAS URG ESPERA POR TIRAGE
         //RUTAS URG ESPERA POR CONSULTA
         //RUTAS ROLES
-        //RUTAS USUARIOS
         //RUTAS ACTIONS
         //PARÉMETROS DEL SISTEMA
              

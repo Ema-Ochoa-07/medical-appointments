@@ -40,6 +40,7 @@ export class Patient extends BaseEntity{
         nullable: false,
         enum: Tipo_documento,
         //default: Tipo_documento.CC
+        type: 'enum'
     })
     tipo_documento: Tipo_documento
 
@@ -72,7 +73,8 @@ export class Patient extends BaseEntity{
 
     @Column({
         nullable:false,
-        enum:Genero
+        enum:Genero,
+        type: 'enum'
     })
     genero: Genero
 
@@ -104,7 +106,8 @@ export class Patient extends BaseEntity{
         @Column({
         nullable: false,
         enum: Estado,
-        default: Estado.Activo
+        default: Estado.Activo,
+        type: 'enum'
     })
     estado: Estado
 
