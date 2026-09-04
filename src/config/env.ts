@@ -8,5 +8,7 @@ export const envs = {
     DB_HOST: get('DATABASE_HOST').required().asString(),   
     DB_USERNAME: get('DATABASE_USERNAME').required().asString(),
     DB_DATABASE: get('DATABASE_DATABASE').required().asString(),
-    DB_PASSWORD: get('DATABASE_PASSWORD').required().asString()
+    DB_PASSWORD: get('DATABASE_PASSWORD').required().asString(),
+
+    JWT_SEED: get('JWT_SEED').required().asString()
 }

@@ -2,6 +2,7 @@ import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { User } from "../../data"
 import { CustomError, RegisterUserDto } from "../../domain"
 import { bcryptAdapter } from "../../config"
+import { JwtAdapter } from "../../config/jwt.adapter"
 
 enum Estado{
     Activo = 'Activo',
@@ -44,7 +45,15 @@ export class UserService{
     user.clave = bcryptAdapter.hash(userData.clave)
 
     try {
-        return await user.save()
+        await user.save()
+         
+        //El id que se va a pasar al token solo aparece en el momento que se crea el user
+        const token = await  JwtAdapter.generateToken({id: user.id})
+        if ( !token ) throw CustomError.internalServer('Error al crear el JWT ')
+        return {
+            token: token,
+            user: user
+    }
 
     } catch (error) {
         throw new Error('Internal Server Error 🧨')
