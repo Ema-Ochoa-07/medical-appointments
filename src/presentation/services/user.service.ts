@@ -1,6 +1,7 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { User } from "../../data"
 import { CustomError, RegisterUserDto } from "../../domain"
+import { bcryptAdapter } from "../../config"
 
 enum Estado{
     Activo = 'Activo',
@@ -40,10 +41,10 @@ export class UserService{
     user.nombre = userData.nombre
     user.username = userData.username
     user.email = userData.email
-    user.clave = userData.clave
+    user.clave = bcryptAdapter.hash(userData.clave)
 
     try {
-        return user.save()
+        return await user.save()
 
     } catch (error) {
         throw new Error('Internal Server Error 🧨')
