@@ -3,6 +3,7 @@ import { User } from "../../data"
 import { CustomError, RegisterUserDto } from "../../domain"
 import { bcryptAdapter } from "../../config"
 import { JwtAdapter } from "../../config/jwt.adapter"
+import { EmailService } from "./email.service"
 
 enum Estado{
     Activo = 'Activo',
@@ -10,7 +11,10 @@ enum Estado{
 }
 
 export class UserService{
-    constructor(){}
+    constructor(
+        private readonly  emailService: EmailService
+
+    ){}
 
 
     async registerUser(userData: RegisterUserDto) {
