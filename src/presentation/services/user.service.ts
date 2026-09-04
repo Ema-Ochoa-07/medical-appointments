@@ -1,6 +1,6 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { User } from "../../data"
-import { RegisterUserDto } from "../../domain"
+import { CustomError, RegisterUserDto } from "../../domain"
 
 enum Estado{
     Activo = 'Activo',
@@ -11,19 +11,43 @@ export class UserService{
     constructor(){}
 
 
-    async registerUser(userData: RegisterUserDto){
-        const user = new User()
+    async registerUser(userData: RegisterUserDto) {
 
-        user.nombre = userData.nombre
-        user.username = userData.username
-        user.email = userData.email
-        user.clave = userData.clave
+    const existeEmail = await User.findOne({
+        where: {email: userData.email }
+    })
 
-        try {
-            return user.save()
-        } catch (error) {
-            throw new Error ('Internal Server Error 🧨')
+    if (existeEmail) {
+        if (existeEmail.estado === Estado.Inactivo) {
+            throw CustomError.badRequest('El email pertenece a un usuario inactivo')
         }
+        throw CustomError.badRequest('El email ya está registrado')
     }
 
+    const existeUsername = await User.findOne({
+        where: { username: userData.username }
+    })
+
+    if (existeUsername) {
+        if (existeUsername.estado === Estado.Inactivo) {
+            throw CustomError.badRequest('El username pertenece a un usuario inactivo')
+        }
+        throw CustomError.badRequest('El username ya está registrado')
+    }
+    
+    const user = new User()
+
+    user.nombre = userData.nombre
+    user.username = userData.username
+    user.email = userData.email
+    user.clave = userData.clave
+
+    try {
+        return user.save()
+
+    } catch (error) {
+        throw new Error('Internal Server Error 🧨')
+      }
+    }   
 }
+
