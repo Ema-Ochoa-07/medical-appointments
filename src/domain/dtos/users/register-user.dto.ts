@@ -1,3 +1,4 @@
+import { regularExps } from "../../../config"
 
 export class RegisterUserDto {
     private constructor(
@@ -13,8 +14,12 @@ export class RegisterUserDto {
 
         if(!nombre) return ['Falta el nombre']
         if(!username) return ['Faltan el username']
-        if(!clave) return ['Falta la contraseña']        
-        if(!email) return ['Falta el email']   
+
+        if(!email) return ['Falta el correo']
+        if(!regularExps.email.test(email)) return ['Correo inválido']
+
+        if(!clave) return ['Falta la contraseña']     
+        if(!regularExps.clave.test(clave)) return ['La contraseña debe tener mínimo 6 caracteres, al menos una Mayúsculua, una minúsculas,un número y un caracter especial']     
         
         return [undefined, new RegisterUserDto(nombre, username, clave, email )]
     }
