@@ -23,7 +23,7 @@ export class AppRoutes{
         //RUTAS ESPECIALISTA
         router.use('/api/v1/specialists', SpecialtiesRoutes.routes)
 
-        
+      
         //RUTAS CONSULTORIO
         //RUTAS EPSs
         //RUTAS CITAS

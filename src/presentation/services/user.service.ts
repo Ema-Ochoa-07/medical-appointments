@@ -1,9 +1,10 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
 import { User } from "../../data"
 import { CustomError, RegisterUserDto } from "../../domain"
-import { bcryptAdapter } from "../../config"
+import { bcryptAdapter, envs } from "../../config"
 import { JwtAdapter } from "../../config/jwt.adapter"
 import { EmailService } from "./email.service"
+import { Subject } from "typeorm/persistence/Subject.js"
 
 enum Estado{
     Activo = 'Activo',
@@ -17,7 +18,7 @@ export class UserService{
     ){}
 
 
-    async registerUser(userData: RegisterUserDto) {
+    public async registerUser(userData: RegisterUserDto) {
 
     const existeEmail = await User.findOne({
         where: {email: userData.email }
@@ -50,7 +51,9 @@ export class UserService{
 
     try {
         await user.save()
-         
+        
+        await this.sendEmailValidationEmail(user.email)
+
         //El id que se va a pasar al token solo aparece en el momento que se crea el user
         const token = await  JwtAdapter.generateToken({id: user.id})
         if ( !token ) throw CustomError.internalServer('Error al crear el JWT ')
@@ -63,5 +66,53 @@ export class UserService{
         throw new Error('Internal Server Error 🧨')
       }
     }   
+
+
+
+    public sendEmailValidationEmail = async (email: string) => {
+        const token = await JwtAdapter.generateToken({email})
+        if( !token ) throw CustomError.internalServer('Error al generar el token')
+
+        const link = `${envs.WEBSERVICE_URL}/users/validate-email/${token}`
+        const html = `
+        <h1> Validación de correo </h1>
+        <p> Click aquí para validar el correo </p>
+        <a href="${link}"> Validación de correo  ${email} </a>
+        `
+   
+        const isSent = this.emailService.sendEmail({
+                to: email,
+                subject: 'Validación de correo',
+                htmlBody: html
+        })
+
+        if(!isSent) throw CustomError.internalServer('Error al enviar el correo')
+
+        return true
+    }
+
+    public validateEmail = async (token: string) => {
+        const payload = await JwtAdapter.validateToken(token)
+        if(!payload) throw CustomError.unAuthorized('Token Inválido')
+
+        const { email } = payload as { email: string }
+        if(!email) throw CustomError.internalServer('El correo no tuvo el token')
+
+        const user = await User.findOne({
+            where:{
+                email: email
+            }
+        })
+        if( !user ) throw CustomError.internalServer('El correo no existe')
+            user.emailValidado = true
+
+        try {
+            await user.save()
+            return true
+        } catch (error) {
+            throw CustomError.internalServer('Internal Server Error')
+        }
+
+    }
 }
 

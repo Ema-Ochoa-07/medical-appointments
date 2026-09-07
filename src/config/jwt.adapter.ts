@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { envs } from './env'
+import { IsNull } from 'typeorm'
 
 export class JwtAdapter {
 
@@ -17,6 +18,17 @@ export class JwtAdapter {
                     resolve(token)
                 }
             )
+        })
+    }
+
+    static async validateToken<T>(token:string): Promise <T | null >{
+        return new Promise ((resolve) =>{
+
+            jwt.verify(token, envs.JWT_SEED, (err, decode) =>{
+                if( err) return resolve(null)
+                
+                resolve(decode as T)
+            })
         })
     }
 }
