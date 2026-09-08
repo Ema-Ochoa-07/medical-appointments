@@ -24,6 +24,7 @@ export class UsersRoutes{
 
         router.post('', controller.registerUser)
         router.get('/validate-email/:token', controller.validateEmail)
+        router.post('/login', controller.loginUser)
 
         return router
     }

@@ -3,6 +3,7 @@ import { UserService } from "../services/user.service";
 import { CustomError, RegisterUserDto } from "../../domain";
 import { json } from "node:stream/consumers";
 import { error } from "node:console";
+import { LoginUserDto } from "../../domain/dtos/users/login-user.dto";
 
 export class UserController{
    
@@ -37,10 +38,27 @@ export class UserController{
             message: 'Token inválido'
         })
     }
-
         this.userService.validateEmail( token )
         .then(() =>{
             res.json('El coreo fue validado satisfactoriamente')
+        })
+        .catch((error) =>{
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message: 'Internal Server Error 🧨'})
+        })
+    }
+
+    loginUser = ( req: Request, res: Response ) => {
+
+        const [ error, loginUserDto] = LoginUserDto.inicioSesion(req.body)
+        if( error ) return res.status(400).json({message: error})
+
+        this.userService.login(loginUserDto!)
+        .then(data =>{
+            return res.status(200).json(data)
         })
         .catch((error) =>{
             console.log(error)

@@ -5,11 +5,13 @@ import { bcryptAdapter, envs } from "../../config"
 import { JwtAdapter } from "../../config/jwt.adapter"
 import { EmailService } from "./email.service"
 import { Subject } from "typeorm/persistence/Subject.js"
+import { LoginUserDto } from "../../domain/dtos/users/login-user.dto"
 
 enum Estado{
     Activo = 'Activo',
     Inactivo = 'Inactivo'
 }
+
 
 export class UserService{
     constructor(
@@ -58,8 +60,15 @@ export class UserService{
         const token = await  JwtAdapter.generateToken({id: user.id})
         if ( !token ) throw CustomError.internalServer('Error al crear el JWT ')
         return {
-            token: token,
-            user: user
+            //SE LA COMENTÓ POR QUE SOLO ES VÁLIDA EN APP QUE UNA VEZ SE REGISTRE SE LOGGEE AUTOMATICAMENTE
+            //PERO ACÁ NO TIENE SENTIDO QUE TE LOGUEES SI AÚN NO HAS ACTIVADO LA CUENTA
+            //token: token,
+            user: {
+                id: user.id,
+                nombre: user.nombre,
+                email: user.email,
+                rol: user.rol,
+            }
     }
 
     } catch (error) {
@@ -113,6 +122,34 @@ export class UserService{
             throw CustomError.internalServer('Internal Server Error')
         }
 
+    }
+
+    public async login(loginUserDto: LoginUserDto){
+
+     const user = await User.findOne({
+        where:{
+            username: loginUserDto.username,
+            estado: Estado.Activo
+        }
+     })
+        if(!user) throw CustomError.unAuthorized('Credenciales inválidas')
+
+        //COMPARAR SI LAS CONTRASEAS SON IGUALES
+        const isMatching = bcryptAdapter.compare(loginUserDto.clave, user.clave )
+        if(!isMatching) throw CustomError.unAuthorized('Credenciales inválidas')
+        // GENERAR TOKEN
+        const token = await JwtAdapter.generateToken({id: user.id})
+        if(!token) throw CustomError.internalServer('Error al crear el token')
+
+        return {
+            token: token,
+            user: {
+                id: user.id,
+                nombre: user.nombre,
+                email: user.email,
+                rol: user.rol,
+            }
+        }
     }
 }
 

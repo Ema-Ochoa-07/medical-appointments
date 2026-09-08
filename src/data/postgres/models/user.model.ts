@@ -5,11 +5,11 @@ enum Estado{
     Inactivo = 'Inactivo'
 }
 
-enum Rol{
+export enum Rol{
     Administrador = 'Administrador',
     Supervisor = 'Supervisor',
     Colaborador = 'Colaborador'
-}
+} 
 
 
 @Entity()
