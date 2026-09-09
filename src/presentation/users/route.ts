@@ -25,6 +25,7 @@ export class UsersRoutes{
         router.post('', controller.registerUser)
         router.get('/validate-email/:token', controller.validateEmail)
         router.post('/login', controller.loginUser)
+        router.patch('/update-rol/:id', controller.updateRol)
 
         return router
     }

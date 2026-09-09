@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
-import { CustomError, RegisterUserDto } from "../../domain";
+import { CustomError, RegisterUserDto, UpdatePatientDto, UpdateRolDto } from "../../domain";
 import { json } from "node:stream/consumers";
 import { error } from "node:console";
 import { LoginUserDto } from "../../domain/dtos/users/login-user.dto";
@@ -66,6 +66,29 @@ export class UserController{
                 return res.status(error.statusCode).json({message: error.message})
             }
             return res.status(500).json({message: 'Internal Server Error 🧨'})
+        })
+    }
+
+    updateRol = (req: Request, res: Response) =>{
+        const { id } = req.params
+
+        if(isNaN(Number(id))){
+            return res.status(400).json({message:'El id debe ser un número'})
+        }
+
+        const [ error, updateRolDto ] = UpdateRolDto.editar(req.body)
+        if(error) return res.status(422).json({message:error})
+
+        this.userService.updateRolUser(Number(id), updateRolDto!)
+        .then(data =>{
+            return res.status(200).json(data)
+        })
+        .catch((error) =>{
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Error internal server Error 🧨'})
         })
     }
     

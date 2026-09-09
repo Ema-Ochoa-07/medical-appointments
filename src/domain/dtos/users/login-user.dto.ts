@@ -9,7 +9,7 @@ export class LoginUserDto {
         const { username, clave } = object
 
 
-        if(!username) return ['Falta el usuario']
+        if(!username) return ['Faltan el username']
         if(!clave) return ['Falta la contraseña']     
         
         return [undefined, new LoginUserDto( username, clave )]

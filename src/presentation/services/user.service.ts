@@ -1,16 +1,16 @@
 import { Code } from "typeorm/driver/mongodb/bson.typings.js"
-import { User } from "../../data"
-import { CustomError, RegisterUserDto } from "../../domain"
+import { Rol, User } from "../../data"
+import { CustomError, LoginUserDto, RegisterUserDto, UpdateRolDto } from "../../domain"
 import { bcryptAdapter, envs } from "../../config"
 import { JwtAdapter } from "../../config/jwt.adapter"
 import { EmailService } from "./email.service"
 import { Subject } from "typeorm/persistence/Subject.js"
-import { LoginUserDto } from "../../domain/dtos/users/login-user.dto"
 
 enum Estado{
     Activo = 'Activo',
     Inactivo = 'Inactivo'
 }
+
 
 
 export class UserService{
@@ -137,6 +137,10 @@ export class UserService{
         //COMPARAR SI LAS CONTRASEAS SON IGUALES
         const isMatching = bcryptAdapter.compare(loginUserDto.clave, user.clave )
         if(!isMatching) throw CustomError.unAuthorized('Credenciales inválidas')
+
+        //VERIFICACIÓN DEL QUEL USUARIO DEBE PRIMERO VALIDAR SU CORREO
+            if(user.emailValidado == false)  throw CustomError.unAuthorized('Debe validar su correo electrónico')
+
         // GENERAR TOKEN
         const token = await JwtAdapter.generateToken({id: user.id})
         if(!token) throw CustomError.internalServer('Error al crear el token')
@@ -150,6 +154,27 @@ export class UserService{
                 rol: user.rol,
             }
         }
+    }
+
+
+    async updateRolUser(id: number, updateRolDto: UpdateRolDto){
+        const user = await User.findOne({
+            where:{
+                id: id,
+            }
+        })
+        if(!user) throw CustomError.badRequest('El usuario no existe') 
+        if(user.estado == Estado.Inactivo) throw CustomError.badRequest('El usuario está inactivo') 
+        if(user.rol == Rol.Colaborador) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
+        if(user.rol == Rol.Supervisor) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
+
+        user.rol = updateRolDto.rol
+         try {             
+            return await user.save()
+
+        } catch (error) {
+            throw CustomError.internalServer("Internal Server Error 🧨")
+        }        
     }
 }
 
