@@ -4,6 +4,7 @@ import { UserService } from "../services/user.service";
 import { EmailService } from "../services/email.service";
 import { env } from "node:process";
 import { envs } from "../../config";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 export class UsersRoutes{
     
@@ -21,10 +22,13 @@ export class UsersRoutes{
         const controller = new UserController(userService)
 
         //RUTAS USER
-
         router.post('', controller.registerUser)
         router.get('/validate-email/:token', controller.validateEmail)
         router.post('/login', controller.loginUser)
+
+        //MIDDLWARE DE PROTECCIÓN DE RUTAS, si se coloca arriba de todas las rutas de ahí para abajo las protege
+        router.use(AuthMiddleware.protect)
+        
         router.patch('/update-rol/:id', controller.updateRol)
 
         return router

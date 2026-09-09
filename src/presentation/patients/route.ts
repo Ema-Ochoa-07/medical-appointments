@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PatientsController } from "./controller";
 import { PatientService } from "../services/patient.service";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 export class PatientsRoutes{
     
@@ -10,6 +11,10 @@ export class PatientsRoutes{
 
         const patientService = new PatientService()
         const controller = new PatientsController(patientService)
+        
+
+        //MIDDLWARE DE PROTECCIÓN DE RUTAS, si se coloca arriba de todas las rutas de ahí para abajo las protege
+        router.use(AuthMiddleware.protect)
 
         //RUTAS PACIENTE
         router.post('', controller.createPatients)
