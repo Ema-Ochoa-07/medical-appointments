@@ -91,5 +91,27 @@ export class UserController{
             return res.status(500).json({message:'Error internal server Error 🧨'})
         })
     }
-    
+
+    //Capturar el usuario
+    getProfile =(req:Request, res: Response) => {
+     
+        console.log('controlador', req.body.sesionUser.id)
+        const { id } = req.body.sesionUser
+
+        if(isNaN(Number(id))){
+            return res.status(400).json({message:'El id debe ser un número'})
+        }
+
+     this.userService.getProfile(Number(id))
+     .then(data =>{
+            return res.status(200).json(data)
+        })
+        .catch((error) =>{
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message: 'Internal Server Error 🧨'})
+        })
+    }
 }  

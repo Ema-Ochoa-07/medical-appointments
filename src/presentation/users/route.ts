@@ -21,14 +21,17 @@ export class UsersRoutes{
         const userService = new UserService(emailService)
         const controller = new UserController(userService)
 
+        //MIDDLWARE DE PROTECCIÓN DE RUTAS, si se coloca arriba de todas las rutas de ahí para abajo las protege
+        //router.use(AuthMiddleware.protect)
+
         //RUTAS USER
         router.post('', controller.registerUser)
         router.get('/validate-email/:token', controller.validateEmail)
         router.post('/login', controller.loginUser)
 
-        //MIDDLWARE DE PROTECCIÓN DE RUTAS, si se coloca arriba de todas las rutas de ahí para abajo las protege
-        router.use(AuthMiddleware.protect)
-        
+        //capturar el usuario
+        router.get('/profile', AuthMiddleware.protect, controller.getProfile) // Solo protege a esa ruta en específico
+       
         router.patch('/update-rol/:id', controller.updateRol)
 
         return router

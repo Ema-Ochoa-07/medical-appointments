@@ -29,7 +29,7 @@ export class AuthMiddleware {
         console.log(token)    
         
         try {
-            //Validar el token extraido en authorizatio y nos trae el payload con el id del usuarios con la fecha inicio expiración del token
+            //Validar el token extraido en authorization y nos trae el payload con el id del usuarios con la fecha inicio expiración del token
             const payload = await JwtAdapter.validateToken<{id: number}>(token) 
             if(!payload) return res.status(401).json({message:'Token inválido'}) 
                 console.log("PAYLOAD",payload)
@@ -37,7 +37,7 @@ export class AuthMiddleware {
             //Validar si el usuario aún existe ya que puede pasar que el halla eliminado el usuario aún activo el token
             const user = await User.findOne({
                 where:{
-                    id: payload.id,
+                    id: payload.id, 
                     estado: Estado.Activo,
                     emailValidado: true
                 }
@@ -45,8 +45,14 @@ export class AuthMiddleware {
 
             if(!user) return res.status(401).json({message: 'Usuario inválido'})
             //USUARIO QUE QUIERE INGRESAR CON EL ID DEL TOKEN
-            //console.log("USER",user)
             
+            //SE especificó QUE la req.body es un objeto por que estaba llgando undefined y por eso no pasaba
+            if (!req.body) {
+            req.body = {}
+            }
+
+            //Ahora Se puede agregar propiedades al req.body "sesionUser" que va a ser igual al usuario dueño del token""
+            req.body.sesionUser = user
             next()
             
         } catch (error) {

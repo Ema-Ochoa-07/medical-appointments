@@ -176,5 +176,24 @@ export class UserService{
             throw CustomError.internalServer("Internal Server Error 🧨")
         }        
     }
+
+    //Capturar el usuario
+    public async getProfile(id: number){
+        const user = await User.findOne({
+            where:{
+                id: id,
+                estado: Estado.Activo
+            }
+        })
+        if(!user) throw CustomError.notFound('Usuario no econtrado')
+            return {
+            user: {
+                id: user.id,
+                nombre: user.nombre,
+                email: user.email,
+                rol: user.rol,
+            }
+        }
+    }
 }
 
