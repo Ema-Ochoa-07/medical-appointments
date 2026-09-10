@@ -157,25 +157,6 @@ export class UserService{
     }
 
 
-    async updateRolUser(id: number, updateRolDto: UpdateRolDto){
-        const user = await User.findOne({
-            where:{
-                id: id,
-            }
-        })
-        if(!user) throw CustomError.badRequest('El usuario no existe') 
-        if(user.estado == Estado.Inactivo) throw CustomError.badRequest('El usuario está inactivo') 
-        if(user.rol == Rol.Colaborador) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
-        if(user.rol == Rol.Supervisor) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
-
-        user.rol = updateRolDto.rol
-         try {             
-            return await user.save()
-
-        } catch (error) {
-            throw CustomError.internalServer("Internal Server Error 🧨")
-        }        
-    }
 
     //Capturar el usuario
     public async getProfile(id: number){
@@ -194,6 +175,34 @@ export class UserService{
                 rol: user.rol,
             }
         }
+    }
+
+
+
+        async updateRolUser(id: number, updateRolDto: UpdateRolDto, sesionUser:User){
+        const user = await User.findOne({
+            where:{
+                id: id,
+            }
+        })
+        if(!user) throw CustomError.badRequest('El usuario no existe') 
+        if(user.estado == Estado.Inactivo) throw CustomError.badRequest('El usuario está inactivo') 
+        if(sesionUser.rol != Rol.Administrador) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
+
+        user.rol = updateRolDto.rol
+         try {             
+            await user.save()
+
+        return {
+            id: user.id,
+            nombre: user.nombre,
+            email: user.email,
+            rol: user.rol
+        }
+
+        } catch (error) {
+            throw CustomError.internalServer("Internal Server Error 🧨")
+        }        
     }
 }
 

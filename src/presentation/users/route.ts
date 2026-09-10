@@ -32,7 +32,7 @@ export class UsersRoutes{
         //capturar el usuario
         router.get('/profile', AuthMiddleware.protect, controller.getProfile) // Solo protege a esa ruta en específico
        
-        router.patch('/update-rol/:id', controller.updateRol)
+        router.patch('/update-rol/:id', AuthMiddleware.protect , controller.updateRol)
 
         return router
     }
