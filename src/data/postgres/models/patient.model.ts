@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Appointment } from "./appointment.model";
 
 enum Tipo_documento{
     CC = 'CC',
@@ -25,6 +26,9 @@ export class Patient extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number
 
+
+    @OneToMany(() => Appointment, (appointmet) => appointmet.patient)
+    appointmets: Appointment[] 
 
     @Column({
         unique:true, //INDICA QUE TIENE QUE SER ÚNICO

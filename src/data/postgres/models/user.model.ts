@@ -1,4 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Appointment } from "./appointment.model";
+import { Attention } from "./attention.model";
 
 enum Estado{
     Activo = 'Activo',
@@ -17,7 +19,6 @@ export enum Rol{
 export class User extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number
-
 
 
     @Column({
@@ -80,6 +81,12 @@ export class User extends BaseEntity{
         })
         rol: Rol
 
+
+    @OneToMany(() => Appointment, (appointmet) => appointmet.user)
+    appointmets: Appointment[] 
+
+    @OneToMany(() => Attention, (attention) => attention.user)
+    attentions: Attention[] 
 
 
     @CreateDateColumn()

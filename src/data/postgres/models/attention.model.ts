@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "./user.model";
 
 enum Estado{
     Programada = 'Programada',
@@ -10,14 +11,14 @@ enum Estado{
 
 @Entity()
 
-export class Appointment extends BaseEntity{
+export class Attention extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number
 
-
+    
     @Column({
        nullable:false,
-       type:"number"
+       type:"integer"
     })
     triaje: number
 
@@ -60,6 +61,9 @@ export class Appointment extends BaseEntity{
     })
     observacion: string
 
+
+    @ManyToOne(() => User, (user) => user.attentions)
+    user:User
 
 
     @CreateDateColumn()

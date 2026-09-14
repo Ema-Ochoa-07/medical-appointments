@@ -1,4 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "./user.model";
+import { Patient } from "./patient.model";
 
 enum Estado{
     Programada = 'Programada',
@@ -9,7 +11,7 @@ enum Estado{
 
 @Entity()
 
-export class Attention extends BaseEntity{
+export class Appointment extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number
 
@@ -65,12 +67,18 @@ export class Attention extends BaseEntity{
     observacion: string
 
 
+    @ManyToOne(() => User, (user) => user.appointmets)
+    user:User
+
+    @ManyToOne(() => Patient, (patient) => patient.appointmets)
+    patient:Patient
+
 
     @CreateDateColumn()
     created_at: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updated_at: Date    
 
-
+    
 }
