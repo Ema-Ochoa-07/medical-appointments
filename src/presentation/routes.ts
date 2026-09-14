@@ -23,10 +23,14 @@ export class AppRoutes{
         //RUTAS ESPECIALISTA
         router.use('/api/v1/specialists', SpecialtiesRoutes.routes)
 
+        //RUTAS CITAS
+        
+
+        //RUTAS ATENCIÓN URG
+
       
         //RUTAS CONSULTORIO
         //RUTAS EPSs
-        //RUTAS CITAS
         //RUTAS CE ESPERA FACTURACIÓN
         //RUTAS CE ESPERA POR CONSULTA
         //RUTAS URG ESPERA POR TIRAGE
