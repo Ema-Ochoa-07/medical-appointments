@@ -18,13 +18,12 @@ export class Appointment extends BaseEntity{
 
     @Column({
         nullable:false,
-        length:100,
-        type:"varchar" 
+        default: true,
+        type:"boolean" 
     })
-    cargar_archivo: string
+    cargar_archivo: boolean
 
-
-
+ 
      @Column({
         nullable:false,
         length:100,
