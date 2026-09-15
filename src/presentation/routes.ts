@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
 import { PatientsRoutes } from "./patients/route";
-import { SpecialtiesRoutes } from "./specialties/route";
 import { UsersRoutes } from "./users/route";
 import { AppointmentRoutes } from "./appointments/route";
 
@@ -17,15 +16,9 @@ export class AppRoutes{
 
         //RUTAS USURAIOS
         router.use('/api/v1/users', UsersRoutes.routes)
-
-        //RUTAS ESPECIALIDAD
-        router.use('/api/v1/specialties', SpecialtiesRoutes.routes)
-         
-        //RUTAS ESPECIALISTA
-        router.use('/api/v1/specialists', SpecialtiesRoutes.routes)
-
+       
         //RUTAS CITAS
-        router.use('./api/v1/appointments', AppointmentRoutes.routes)
+        router.use('/api/v1/appointments', AppointmentRoutes.routes)
 
         //RUTAS ATENCIÓN URG
 

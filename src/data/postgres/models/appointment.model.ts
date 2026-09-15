@@ -59,7 +59,6 @@ export class Appointment extends BaseEntity{
 
     
     @Column({
-       nullable:false,
        length:100,
        type:"varchar"
     })
