@@ -167,14 +167,7 @@ export class UserService{
             }
         })
         if(!user) throw CustomError.notFound('Usuario no econtrado')
-            return {
-            user: {
-                id: user.id,
-                nombre: user.nombre,
-                email: user.email,
-                rol: user.rol,
-            }
-        }
+            return user
     }
 
 

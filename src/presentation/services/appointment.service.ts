@@ -15,9 +15,13 @@ export class AppointmentService {
         //RESOLVER 2 PROMESAS A LA VEZ
         const patientPromise = this.patientService.getPatientById(appointmentDto.pattientId)
         const userPromise = this.userService.getProfile(appointmentDto.userId)
-        await Promise.all([patientPromise, userPromise])
+        const arrPromise = await Promise.all([patientPromise, userPromise])
 
         const appointment = new Appointment()
+        
+        appointment.patient = arrPromise[0]
+        appointment.user = arrPromise[1]
+
         appointment.cargar_archivo = appointmentDto.cargar_archivo
         appointment.especialidad = appointmentDto.especialidad
         appointment.especialista = appointmentDto.especialista
@@ -27,9 +31,5 @@ export class AppointmentService {
         } catch (error) {
             throw CustomError.internalServer('Internal server Error')
         }
-
-        
-
-        return await console.log('asdsa')
     }
 }

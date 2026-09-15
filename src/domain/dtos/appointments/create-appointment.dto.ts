@@ -10,7 +10,7 @@ export class AppointmentDto {
 
     ){}
 
-    static register(object: {[key: string]: any}): [string | undefined, AppointmentDto?]{
+    static create(object: {[key: string]: any}): [string | undefined, AppointmentDto?]{
         const { 
             userId, pattientId, cargar_archivo,
             especialidad, especialista, fecha_cita
