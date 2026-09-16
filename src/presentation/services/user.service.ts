@@ -164,7 +164,8 @@ export class UserService{
             where:{
                 id: id,
                 estado: Estado.Activo
-            }
+            },
+            relations: {appointmets: true}
         })
         if(!user) throw CustomError.notFound('Usuario no econtrado')
             return user
@@ -178,9 +179,9 @@ export class UserService{
                 id: id,
             }
         })
-        if(!user) throw CustomError.badRequest('El usuario no existe') 
-        if(user.estado == Estado.Inactivo) throw CustomError.badRequest('El usuario está inactivo') 
-        if(sesionUser.rol != Rol.Administrador) throw CustomError.badRequest('Para editar el rol debe ser Administrador') 
+        if(!user) throw CustomError.unAuthorized('El usuario no existe') 
+        if(user.estado == Estado.Inactivo) throw CustomError.unAuthorized('El usuario está inactivo') 
+        if(sesionUser.rol != Rol.Administrador) throw CustomError.unAuthorized('Para editar el rol debe ser Administrador') 
 
         user.rol = updateRolDto.rol
          try {             

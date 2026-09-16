@@ -1,4 +1,4 @@
-import { Appointment, Patient } from "../../data";
+import { Appointment, Patient, Rol, User } from "../../data";
 import { AppointmentDto, CustomError } from "../../domain";
 import { PatientService } from "./patient.service";
 import { UserService } from "./user.service";
@@ -37,7 +37,6 @@ export class AppointmentService {
         try {
             return await appointment.save()
         } catch (error) {
-            console.log('❌ ERROR AL GUARDAR CITA:', error)
             throw CustomError.internalServer('Internal server Error')
         }
     }
@@ -59,17 +58,31 @@ export class AppointmentService {
 
     public async getAppointmentById(id: number){
 
+        const appointment = await Appointment.findOne({
+            where:{
+                id: id,
+                  estado: Estado.Programada
+            },
+                relations: { user: true, patient: true }
+        })
+        if(!appointment) throw CustomError.notFound("Cita no encontrada")
+          return  appointment
+    }
+
+
+    public async deleteAppointment(id: number, userSesion: User){
+
+        const appointment = await this.getAppointmentById(id)
+        if( userSesion.rol == Rol.Colaborador) throw CustomError.unAuthorized('Error!! usted no tiene permisos para ejecutrar esta acción') 
+        appointment.estado = Estado.Cancelada
+
         try {
-            const appointment = Appointment.findOne({
-                where:{
-                    id: id,
-                    estado: Estado.Programada
-                }
-            })
-            return await appointment
+            await appointment.save()
+            return 'Cita Cancelada'
         } catch (error) {
-            throw CustomError.internalServer("Internal Server Error 🧨")
+             throw CustomError.internalServer("Internal Server Error 🧨")
         }
+
     }
 
 }

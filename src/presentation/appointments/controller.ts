@@ -60,4 +60,23 @@ export class AppointmentController{
             return res.status(500).json({message:'Internal server Error'})
         })
     }
+
+    deleteAppointmentId = (req: Request, res: Response) => {
+        const { id } = req.params
+        if( !Number(id)) return  res.status(400).json({message: 'El id debe ser un número '})
+
+        const idSesion = req.body.sesionUser 
+        this.appointmentService.deleteAppointment(Number(id), idSesion)
+        .then(data => {
+            return res.status(200).json(data)
+        })
+        .catch((error) => {
+            console.log(error)
+            if(error instanceof CustomError){
+                return res.status(error.statusCode).json(error.message)
+            }
+            return res.status(500).json({message:'Internal server Error 🧨'})
+        })
+
+    }
 }

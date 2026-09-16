@@ -116,7 +116,7 @@ export class UserController{
             if(error instanceof CustomError){
                 return res.status(error.statusCode).json({message: error.message})
             }
-            return res.status(500).json({message:'Error internal server Error 🧨'})
+            return res.status(500).json({message:'Iternal server Error 🧨'})
         })
     }
 }  

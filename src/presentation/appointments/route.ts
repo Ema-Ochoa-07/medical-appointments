@@ -26,8 +26,9 @@ export class AppointmentRoutes{
         
         //RUTAS APPOINTEMENT
         router.post('', controller.createAppointment)
-        router.get('', controller.getAppointmets)
-        router.get('', controller.getAppointmentId)
+        router.get('/', controller.getAppointmets)
+        router.get('/:id', controller.getAppointmentId)
+        router.delete('/:id', controller.deleteAppointmentId)
 
         return router
     }
