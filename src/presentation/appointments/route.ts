@@ -28,7 +28,7 @@ export class AppointmentRoutes{
         router.post('', controller.createAppointment)
         router.get('/', controller.getAppointmets)
         router.get('/:id', controller.getAppointmentId)
-        router.delete('/:id', controller.deleteAppointmentId)
+        router.delete('/:id',AuthMiddleware.protect, controller.deleteAppointmentId)
 
         return router
     }

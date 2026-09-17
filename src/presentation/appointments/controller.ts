@@ -68,7 +68,7 @@ export class AppointmentController{
         const idSesion = req.body.sesionUser 
         this.appointmentService.deleteAppointment(Number(id), idSesion)
         .then(data => {
-            return res.status(200).json(data)
+            return res.status(204).json(data)
         })
         .catch((error) => {
             console.log(error)
