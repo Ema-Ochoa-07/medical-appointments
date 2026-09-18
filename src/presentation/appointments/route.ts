@@ -25,7 +25,7 @@ export class AppointmentRoutes{
         const controller = new AppointmentController(appointmentService)
         
         //RUTAS APPOINTEMENT
-        router.post('', controller.createAppointment)
+        router.post('', AuthMiddleware.protect,  controller.createAppointment)
         router.get('/', controller.getAppointmets)
         router.get('/:id', controller.getAppointmentId)
         router.delete('/:id',AuthMiddleware.protect, controller.deleteAppointmentId)

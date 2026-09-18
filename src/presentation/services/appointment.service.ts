@@ -63,7 +63,25 @@ export class AppointmentService {
                 id: id,
                   estado: Estado.Programada
             },
-                relations: { user: true, patient: true }
+                relations: { user: true, patient: true },
+                select:{
+                    user:{
+                        id:true,
+                        nombre: true,
+                        username:true
+                    },
+                    patient:{
+                       id: true ,
+                       numero_documento: true,
+                       tipo_documento: true,
+                       nombres: true,
+                       apellidos: true,
+                       fecha_nacimiento:true,
+                       genero: true,
+                       direccion: true,
+                       email: true 
+                    }
+                }
         })
         if(!appointment) throw CustomError.notFound("Cita no encontrada")
           return  appointment

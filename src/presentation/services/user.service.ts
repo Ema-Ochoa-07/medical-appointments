@@ -165,7 +165,26 @@ export class UserService{
                 id: id,
                 estado: Estado.Activo
             },
-            relations: {appointmets: true}
+            //RELACIONES ANIDADAS
+            relations: {appointmets:{patient: true}},
+            select:{ 
+                appointmets:{
+                    id: true,
+                    estado: true,
+                
+               patient:{
+                       id: true ,
+                       numero_documento: true,
+                       tipo_documento: true,
+                       nombres: true,
+                       apellidos: true,
+                       fecha_nacimiento:true,
+                       genero: true,
+                       direccion: true,
+                       email: true 
+                    }
+                }
+            }
         })
         if(!user) throw CustomError.notFound('Usuario no econtrado')
             return user
