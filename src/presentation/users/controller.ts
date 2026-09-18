@@ -15,10 +15,8 @@ export class UserController{
         const [ error, registerUserDto] = RegisterUserDto.register(req.body)
         if(error) return res.status(422).json({meesage: error})
         
-        console.log(req.file)
-        //const file = req.file
-
-        this.userService.registerUser(registerUserDto!)
+        //console.log(req.file)
+        this.userService.registerUser(registerUserDto!, req.file)
         .then(user =>{
             return res.status(201).json(user)
         })

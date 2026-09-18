@@ -20,7 +20,7 @@ export class UserService{
     ){}
 
 
-    public async registerUser(userData: RegisterUserDto) { //, file: Express.Multer.File | undefined adicionar parámetro para foto
+    public async registerUser(userData: RegisterUserDto, file: Express.Multer.File | undefined ) { //, file: Express.Multer.File | undefined adicionar parámetro para foto
 
     const existeEmail = await User.findOne({
         where: {email: userData.email }
