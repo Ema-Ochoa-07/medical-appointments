@@ -3,7 +3,7 @@ import { UserController } from "./controller";
 import { UserService } from "../services/user.service";
 import { EmailService } from "../services/email.service";
 import { env } from "node:process";
-import { envs } from "../../config";
+import { envs, uploadSingle } from "../../config";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 export class UsersRoutes{
@@ -25,7 +25,7 @@ export class UsersRoutes{
         //router.use(AuthMiddleware.protect)
 
         //RUTAS USER
-        router.post('', controller.registerUser)
+        router.post('/register', uploadSingle('avatar') ,controller.registerUser)
         router.get('/validate-email/:token', controller.validateEmail)
         router.post('/login', controller.loginUser)
 

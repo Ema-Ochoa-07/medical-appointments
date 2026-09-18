@@ -29,9 +29,7 @@ export class PatientsController{
             return res.status(500).json({message:'Internal Server Error 🧨'})                
         })
     }
-
-    
-
+  
 
      getPatients = (req: Request, res: Response) => {
 

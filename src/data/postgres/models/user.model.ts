@@ -80,6 +80,13 @@ export class User extends BaseEntity{
             type: 'enum'
         })
         rol: Rol
+    
+    @Column({
+        nullable: true,
+        default:"https://cdn-icons-png.flaticon.com/512/6326/6326055.png",
+        type:"varchar"
+    })
+    avatar: string
 
 
     @OneToMany(() => Appointment, (appointmet) => appointmet.user)

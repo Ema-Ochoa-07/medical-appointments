@@ -1,3 +1,4 @@
 export * from './regular-exp' 
 export * from './env' 
 export * from './bcrypt.adapter'
+export * from './upload-files.adapter'

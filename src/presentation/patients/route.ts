@@ -2,6 +2,7 @@ import { Router } from "express";
 import { PatientsController } from "./controller";
 import { PatientService } from "../services/patient.service";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { uploadSingle } from "../../config";
 
 export class PatientsRoutes{
     
@@ -18,6 +19,9 @@ export class PatientsRoutes{
 
         //RUTAS PACIENTE
         router.post('', controller.createPatients)
+        //Middleware-MUlter para subir archivos
+        router.post('/register', uploadSingle('archivo'), controller.createPatients) //TODO LUEGO CAMBIAR EL MÉTODO A IMPOR-PATIENT
+
         router.get('/', controller.getPatients)
         router.get('/:id', controller.getPatientById)
         router.patch('/:id', controller.updatePatientById)
