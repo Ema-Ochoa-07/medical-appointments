@@ -1,3 +1,5 @@
 # Dependencias
 node_modules/
-.env.ts
+
+# Variables de entorno
+.env
