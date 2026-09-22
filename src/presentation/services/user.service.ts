@@ -5,6 +5,7 @@ import { bcryptAdapter, envs } from "../../config"
 import { JwtAdapter } from "../../config/jwt.adapter"
 import { EmailService } from "./email.service"
 import { Subject } from "typeorm/persistence/Subject.js"
+import cloudinary from "../../config/cloudinary.adapter"
 
 enum Estado{
     Activo = 'Activo',
@@ -52,8 +53,29 @@ export class UserService{
     user.clave = bcryptAdapter.hash(userData.clave)
 
     try {
+        // Subir avatar a Cloudinary si el usuario envió una imagen
+        if (file) {
+            const result = await new Promise<any>((resolver, rechazar) => {
+
+                const subirArchivo = cloudinary.uploader.upload_stream(
+                    {
+                        folder: "avatars",
+                        resource_type: "image"
+                    },
+                    (error, result) => {
+
+                        if (error) rechazar(error)
+                        else resolver(result)
+                    }
+                )
+                subirArchivo.end(file.buffer)
+            })
+
+        user.avatar = result.secure_url
+        }
+
         await user.save()
-        
+       
         await this.sendEmailValidationEmail(user.email)
 
         //El id que se va a pasar al token solo aparece en el momento que se crea el user
