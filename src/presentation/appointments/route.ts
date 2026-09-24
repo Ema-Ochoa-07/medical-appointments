@@ -30,6 +30,8 @@ export class AppointmentRoutes{
         router.get('/:id', controller.getAppointmentId)
         router.delete('/:id',AuthMiddleware.protect, controller.deleteAppointmentId)
 
+        router.post('/import', AuthMiddleware.protect, controller.importAppointments)
+
         return router
     }
 }

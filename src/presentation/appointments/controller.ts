@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AppointmentService } from "../services/appointment.service";
 import { AppointmentDto, CustomError } from "../../domain";
 import { error } from "node:console";
+import { ImportAppointmentDto } from "../../domain/dtos/appointments/import-appointment.dto";
 
 export class AppointmentController{
     
@@ -79,4 +80,27 @@ export class AppointmentController{
         })
 
     }
+
+
+    //******PROCESO DE CARGUE DEL ACHIVO********** */
+    
+    importAppointments = (req: Request, res: Response) =>{
+      
+            const [ error, importAppointmentDto ] = ImportAppointmentDto.create(req.body)
+            if(error) return res.status(422).json({message:error})
+                
+            const sesionUser = req.body.sesionUser
+    
+            this.appointmentService.importAppointments( importAppointmentDto!, sesionUser)
+            .then(apointments =>{
+                return res.status(201).json(apointments)
+            })
+            .catch((error) =>{
+                console.log(error)
+                if(error instanceof CustomError){
+                    return res.status(error.statusCode).json({message: error.message})
+                }
+                return res.status(500).json({message:'Iternal server Error 🧨'})
+            })
+        }
 }

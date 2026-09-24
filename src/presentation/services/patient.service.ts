@@ -28,16 +28,9 @@ export class PatientService {
         const patient = new Patient()
 
         patient.numero_documento = patientData.numero_documento
-        patient.tipo_documento = patientData.tipo_documento
-        patient.nombres = patientData.nombres.toLowerCase().trim()
-        patient.apellidos = patientData.apellidos.toLowerCase().trim()
-        patient.fecha_nacimiento = patientData.fecha_nacimiento
-        patient.genero = patientData.genero
+        patient.nombre = patientData.nombres.toLowerCase().trim()
         patient.telefono = patientData.telefono.toLowerCase().trim()
-        patient.direccion = patientData.direccion.toLowerCase().trim()
         
-        patient.email = patientData.email
-
         try {
         //CÓDIGO ASÍNCRONO - GUARDADO DE BD               
         return patient.save()
@@ -46,10 +39,7 @@ export class PatientService {
             //SI LA EJECUCIÓN FALLA ES UN ERROR  500
             throw CustomError.internalServer("Internal Server Error 🧨")
         }
-
     }
-
-
 
     /**
      * @Description Este método devuelve una promesa con todos los pacientes
@@ -106,8 +96,7 @@ export class PatientService {
 
             patient.numero_documento = patientData.numero_documento
             patient.tipo_documento = patientData.tipo_documento
-            patient.nombres = patientData.nombres.toLowerCase().trim()
-            patient.apellidos = patientData.apellidos.toLowerCase().trim()
+            patient.nombre = patientData.nombres.toLowerCase().trim()
             patient.fecha_nacimiento = patientData.fecha_nacimiento
             patient.genero = patientData.genero
             patient.telefono = patientData.telefono.toLowerCase().trim()

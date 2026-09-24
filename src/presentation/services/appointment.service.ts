@@ -1,5 +1,6 @@
 import { Appointment, Patient, Rol, User } from "../../data";
 import { AppointmentDto, CustomError } from "../../domain";
+import { ImportAppointmentDto } from "../../domain/dtos/appointments/import-appointment.dto";
 import { PatientService } from "./patient.service";
 import { UserService } from "./user.service";
 
@@ -29,7 +30,6 @@ export class AppointmentService {
         appointment.patient = arrPromise[0]
         appointment.user = arrPromise[1]
 
-        appointment.cargar_archivo = appointmentDto.cargar_archivo
         appointment.especialidad = appointmentDto.especialidad
         appointment.especialista = appointmentDto.especialista
         appointment.fecha_cita = appointmentDto.fecha_cita
@@ -39,7 +39,7 @@ export class AppointmentService {
         } catch (error) {
             throw CustomError.internalServer('Internal server Error')
         }
-    }
+    }   
 
 
     public async getAppointments(){
@@ -74,8 +74,7 @@ export class AppointmentService {
                        id: true ,
                        numero_documento: true,
                        tipo_documento: true,
-                       nombres: true,
-                       apellidos: true,
+                       nombre: true,
                        fecha_nacimiento:true,
                        genero: true,
                        direccion: true,
@@ -102,5 +101,67 @@ export class AppointmentService {
         }
 
     }
+
+
+
+     //******PROCESO DE CARGUE DEL ACHIVO********** */
+
+    public async importAppointments(importAppointmentDto: ImportAppointmentDto, sesionUser: User){
+        
+        //console.log(sesionUser.id)
+
+        const patientExist = await Patient.findOne({
+            where:{
+                numero_documento: importAppointmentDto.numero_documento
+            }
+        })
+        // PACIENTE EXISTENTE
+        let patients: Patient
+        let tipoPaciente: string
+
+        if(patientExist) {
+            if(patientExist.nombre !== importAppointmentDto.paciente){
+                return{
+                    tipo: 'Inconsistencia',
+                    paciente:{
+                        numero_documento: importAppointmentDto.numero_documento,
+                        nombreExcel: importAppointmentDto.paciente,
+                        nombreSistema: patientExist.nombre
+                    }
+                }
+            }
+            patients = patientExist 
+            tipoPaciente = 'Existente'
+        } 
+        // PACIENTE NUEVO
+        else{
+            patients = new Patient()
+            patients.numero_documento = importAppointmentDto.numero_documento
+            patients.nombre = importAppointmentDto.paciente
+            patients.telefono = importAppointmentDto.telefono
+            await patients.save()
+            tipoPaciente = 'Nuevo'
+        }       
+        
+        const appointments = new Appointment()
+        appointments.especialidad = importAppointmentDto.especialidad
+        appointments.especialista = importAppointmentDto.especialista
+        appointments.fecha_cita = importAppointmentDto.hora
+        appointments.observacion = importAppointmentDto.observacion
+
+        appointments.patient = patients
+        appointments.user = sesionUser
+
+        try {
+        await appointments.save()
+        return{
+            tipo: tipoPaciente
+        }
+        } catch (error) {
+            console.log(error)
+            throw CustomError.internalServer("Internal Server Error 🧨")
+        }
+    }
+
 
 }

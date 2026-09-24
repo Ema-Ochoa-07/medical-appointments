@@ -16,13 +16,6 @@ export class Appointment extends BaseEntity{
     id: number
 
 
-    @Column({
-        nullable:false,
-        default: true,
-        type:"boolean" 
-    })
-    cargar_archivo: boolean
-
  
      @Column({
         nullable:false,
@@ -53,16 +46,17 @@ export class Appointment extends BaseEntity{
         
     @Column({
         nullable:false,
-        type:"date"   
+        type:"timestamp"   
     })
     fecha_cita: Date
 
     
     @Column({
+       nullable:true,
        length:100,
        type:"varchar"
     })
-    observacion: string
+    observacion?: string | undefined;
 
 
     @ManyToOne(() => User, (user) => user.appointmets)

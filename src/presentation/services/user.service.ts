@@ -90,6 +90,7 @@ export class UserService{
                 nombre: user.nombre,
                 email: user.email,
                 rol: user.rol,
+                avatar: user.avatar
             }
     }
 
@@ -198,8 +199,7 @@ export class UserService{
                        id: true ,
                        numero_documento: true,
                        tipo_documento: true,
-                       nombres: true,
-                       apellidos: true,
+                       nombre: true,
                        fecha_nacimiento:true,
                        genero: true,
                        direccion: true,

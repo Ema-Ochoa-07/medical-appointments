@@ -27,9 +27,6 @@ export class Patient extends BaseEntity{
     id: number
 
 
-    @OneToMany(() => Appointment, (appointmet) => appointmet.patient)
-    appointmets: Appointment[] 
-
     @Column({
         unique:true, //INDICA QUE TIENE QUE SER ÚNICO
         nullable:false, //EN FALSE INDICA QUE NO PUEDE SER NULO
@@ -41,7 +38,7 @@ export class Patient extends BaseEntity{
 
 
     @Column({
-        nullable: false,
+        nullable: true,
         enum: Tipo_documento,
         //default: Tipo_documento.CC
         type: 'enum'
@@ -55,28 +52,18 @@ export class Patient extends BaseEntity{
         length:100,
         type:"varchar"
     })
-    nombres: string
+    nombre: string
 
-
-
+    
     @Column({
-        nullable:false,
-        length:100,
-        type:"varchar" 
-    })
-    apellidos: string
-
-
-        
-    @Column({
-        nullable:false,
+        nullable:true,
         type:"date"   
     })
     fecha_nacimiento: Date
 
 
     @Column({
-        nullable:false,
+        nullable:true,
         enum:Genero,
         type: 'enum'
     })
@@ -93,6 +80,7 @@ export class Patient extends BaseEntity{
 
 
     @Column({
+        nullable:true,
         type:"text"  
     })
     direccion: string
@@ -100,8 +88,8 @@ export class Patient extends BaseEntity{
 
 
     @Column({
-        unique: true,
-        nullable:false,
+        //unique: true,
+        nullable:true,
         length:150,
         type:"varchar"
     })
@@ -116,6 +104,9 @@ export class Patient extends BaseEntity{
     })
     estado: Estado
 
+
+    @OneToMany(() => Appointment, (appointmet) => appointmet.patient)
+    appointmets: Appointment[] 
 
 
     @CreateDateColumn()
