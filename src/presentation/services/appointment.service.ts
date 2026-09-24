@@ -4,6 +4,7 @@ import { ImportAppointmentDto } from "../../domain/dtos/appointments/import-appo
 import { PatientService } from "./patient.service";
 import { UserService } from "./user.service";
 
+
 enum Estado{
     Programada = 'Programada',
     Atendida = 'Atendida',
