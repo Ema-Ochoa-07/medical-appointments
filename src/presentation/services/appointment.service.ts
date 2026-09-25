@@ -1,3 +1,4 @@
+import { readExcel } from "../../config";
 import { Appointment, Patient, Rol, User } from "../../data";
 import { AppointmentDto, CustomError } from "../../domain";
 import { ImportAppointmentDto } from "../../domain/dtos/appointments/import-appointment.dto";
@@ -161,6 +162,42 @@ export class AppointmentService {
         } catch (error) {
             console.log(error)
             throw CustomError.internalServer("Internal Server Error 🧨")
+        }
+    }
+
+
+    public async procesarExcel(file: Express.Multer.File, sesionUser: User){
+
+        const filas = readExcel(file.buffer)
+
+        let citasCreadas = 0
+        let pacientesNuevos = 0
+        let pacientesExistentes = 0
+        const inconsistencias: any[] = []
+
+        for(const fila of filas){
+            console.log(fila)
+            const resultado = await this.importAppointments(fila, sesionUser)
+
+            if(resultado.tipo == 'Nuevo'){
+                citasCreadas++
+                pacientesNuevos++
+            }
+
+            if(resultado.tipo == 'Existente'){
+                citasCreadas++
+                pacientesExistentes++
+            }
+
+            if(resultado.tipo == 'Inconsistencia'){
+                inconsistencias.push(resultado.paciente)
+            }            
+        }
+        return{
+            citasCreadas,
+            pacientesNuevos,
+            pacientesExistentes,
+            inconsistencias
         }
     }
 

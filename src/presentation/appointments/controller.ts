@@ -86,21 +86,45 @@ export class AppointmentController{
     
     importAppointments = (req: Request, res: Response) =>{
       
-            const [ error, importAppointmentDto ] = ImportAppointmentDto.create(req.body)
-            if(error) return res.status(422).json({message:error})
+        const [ error, importAppointmentDto ] = ImportAppointmentDto.create(req.body)
+        if(error) return res.status(422).json({message:error})
                 
-            const sesionUser = req.body.sesionUser
+        const sesionUser = req.body.sesionUser
     
-            this.appointmentService.importAppointments( importAppointmentDto!, sesionUser)
-            .then(apointments =>{
-                return res.status(201).json(apointments)
-            })
-            .catch((error) =>{
+        this.appointmentService.importAppointments( importAppointmentDto!, sesionUser)
+        .then(apointment =>{
+            return res.status(201).json(apointment)
+        })
+        .catch((error) =>{
                 console.log(error)
-                if(error instanceof CustomError){
+            if(error instanceof CustomError){
                     return res.status(error.statusCode).json({message: error.message})
-                }
-                return res.status(500).json({message:'Iternal server Error 🧨'})
-            })
-        }
+            }
+            return res.status(500).json({message:'Iternal server Error 🧨'})
+        })
+    }
+
+    
+    procesarExcel = (req: Request, res: Response) =>{
+
+        const archivoRecibido = req.file
+        if(!archivoRecibido) return res.status(400).json({ message: 'Debe enviar un archivo Excel o CSV' })
+
+        const sesionUser = req.body.sesionUser       
+
+        this.appointmentService.procesarExcel( archivoRecibido, sesionUser)
+        .then(apointments =>{
+            return res.status(201).json(apointments)
+        })
+        .catch((error) =>{
+                console.log(error)
+            if(error instanceof CustomError){
+                    return res.status(error.statusCode).json({message: error.message})
+            }
+            return res.status(500).json({message:'Iternal server Error 🧨'})
+        })        
+    }
+    
+
+    
 }

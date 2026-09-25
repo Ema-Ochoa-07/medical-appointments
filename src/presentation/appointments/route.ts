@@ -5,7 +5,7 @@ import { AppointmentService } from "../services/appointment.service";
 import { PatientService } from "../services/patient.service";
 import { UserService } from "../services/user.service";
 import { EmailService } from "../services/email.service";
-import { envs } from "../../config";
+import { envs, uploadSingleExcel } from "../../config";
 
 export class AppointmentRoutes{
     
@@ -31,6 +31,7 @@ export class AppointmentRoutes{
         router.delete('/:id',AuthMiddleware.protect, controller.deleteAppointmentId)
 
         router.post('/import', AuthMiddleware.protect, controller.importAppointments)
+        router.post('/procesar',uploadSingleExcel('file'), AuthMiddleware.protect, controller.procesarExcel)
 
         return router
     }

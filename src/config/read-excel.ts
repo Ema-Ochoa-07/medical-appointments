@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx'
 import { CustomError } from '../domain'
+import { ImportAppointmentDto } from '../domain/dtos/appointments/import-appointment.dto'
 
 export const readExcel = (buffer: Buffer) => {
 
@@ -20,7 +21,8 @@ export const readExcel = (buffer: Buffer) => {
     const hoja = workbook.Sheets[nombreHoja]
 
     //Convertimos el contenido de la hoja en un arreglo de objetos
-    const filas = XLSX.utils.sheet_to_json(hoja!)
+    //Importante agregarle el DTO para que typeScript no interprete la hoja como unknow 
+    const filas = XLSX.utils.sheet_to_json<ImportAppointmentDto>(hoja!)
 
     if(filas.length === 0){
         throw CustomError.notFound('El archivo Excel o CSV está vacío')
