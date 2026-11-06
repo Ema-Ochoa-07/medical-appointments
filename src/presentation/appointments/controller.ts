@@ -33,7 +33,7 @@ export class AppointmentController{
         this.appointmentService.getAppointments()
 
         .then(appointments =>{
-            return res.status(200).json({message:appointments})
+            return res.status(200).json(appointments)
         })
         .catch((error) =>{
             console.log(error)
@@ -110,9 +110,11 @@ export class AppointmentController{
         const archivoRecibido = req.file
         if(!archivoRecibido) return res.status(400).json({ message: 'Debe enviar un archivo Excel o CSV' })
 
-        const sesionUser = req.body.sesionUser       
+        const sesionUser = req.body.sesionUser    
+        
+        const fechaAtencion = req.body.fechaAtencion
 
-        this.appointmentService.procesarExcel( archivoRecibido, sesionUser)
+        this.appointmentService.procesarExcel( archivoRecibido, sesionUser, fechaAtencion)
         .then(apointments =>{
             return res.status(201).json(apointments)
         })

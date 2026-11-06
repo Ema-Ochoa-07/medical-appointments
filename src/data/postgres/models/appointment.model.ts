@@ -51,6 +51,7 @@ export class Appointment extends BaseEntity{
     fecha_cita: Date
 
     
+
     @Column({
        nullable:true,
        length:100,
@@ -59,6 +60,16 @@ export class Appointment extends BaseEntity{
     observacion?: string | undefined;
 
 
+
+    @Column({
+        nullable: false,
+        length:50,
+        type: "varchar"
+    })
+    codigo_turno: string 
+
+
+    
     @ManyToOne(() => User, (user) => user.appointmets)
     user:User
 

@@ -1,3 +1,4 @@
+import { Between } from "typeorm";
 import { readExcel } from "../../config";
 import { Appointment, Patient, Rol, User } from "../../data";
 import { AppointmentDto, CustomError } from "../../domain";
@@ -102,12 +103,90 @@ export class AppointmentService {
              throw CustomError.internalServer("Internal Server Error 🧨")
         }
 
+    }   
+
+
+     //******ESTIPULAR PREFIJOS A ESPECIALIDADES********** */
+    
+    public obtenerPrefijos(especialidad: string){
+        const prefijos: { [key: string]: string } = {
+            'Medicina General': 'MG',
+            'Pediatria': 'PED',
+            'Traumatologia': 'TR',
+            'Urología': 'UR',
+        }
+        if(prefijos[especialidad])
+            return prefijos[especialidad]
+        else{
+            return especialidad.trim().substring(0,3).toUpperCase()
+        }
     }
 
 
+    //******GENERCIÓN AUTOMÁTICA DEL CÓDIGO********** */
+    public async generarCodigoTurno(especialidad: string, fechaAtencion: Date){
+        
+        const prefijo = this.obtenerPrefijos(especialidad)
 
-     //******PROCESO DE CARGUE DEL ACHIVO********** */
+        // Capturamos la fecha de Atención original para luego poder modificarla
+        const inicioDia = new Date(fechaAtencion)
 
+        //Modificamos nuestra fecha de atención como la hora exacta en donde INICIA EL DÍA
+        // (0 horas, 0 minutos, 0 segundos, 0 milisegundos) 
+        inicioDia.setHours(0, 0, 0, 0)
+
+        const finDia = new Date(inicioDia)
+        finDia.setHours(23,59,59,999)
+        
+        //CONSULTAR LAS CITAS EXISTENTES EN ESE DÍA
+        const citasExistentes = await Appointment.find({
+            where:{
+                especialidad: especialidad,
+                fecha_cita: Between(inicioDia, finDia)
+            }
+        })
+
+        //ENCONTRAR EL CONSECUTIVO MAYOR
+        let consecutivo = 0
+        for( const cita of citasExistentes){
+            
+            //SE COMPRUEBA QUE EL CONSECUTIVO COMIENCE CON EL PREFIJO CORRESPONDIENTE (STARTSWITH)
+            if( cita.codigo_turno.startsWith(prefijo)){
+
+                //EXTRAE EL NÚMERO DEL TAMAÑO DEL PREFIJO
+                const numero = Number(cita.codigo_turno.substring(prefijo.length))
+
+                if(numero > consecutivo){
+                    consecutivo = numero
+                }
+            }               
+        }
+        consecutivo = consecutivo +1
+        return prefijo+consecutivo
+    }
+
+
+    //******ESTANDARIZAR FORMATO DE FECHA********** */
+    /** en-CA — Inglés de Canadá     Año - Mes - Día  2026-11-05
+        es-CO — Español de Colombia  Día / Mes / Año  05/11/2026
+        es-ES — Español de España    Día / Mes / Año  05/11/2026
+        en-US — Inglés de USA        Mes / Día / Año  11/29/2026
+        en-GB — Inglés británico     Día / Mes / Año  05/11/2026*/
+     
+    public darFormatoFecha (fechaAtencion: Date){
+        const formatoFecha  = new Intl.DateTimeFormat('en-CA',{
+            timeZone: 'America/Bogota',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        })      
+        return formatoFecha.format(fechaAtencion) 
+
+    }
+
+    
+
+    //******PROCESOMIENTO INDIVIDUAL DE CARGUE DEL ACHIVO********** */
     public async importAppointments(importAppointmentDto: ImportAppointmentDto, sesionUser: User){
         
         //console.log(sesionUser.id)
@@ -128,7 +207,8 @@ export class AppointmentService {
                     paciente:{
                         numero_documento: importAppointmentDto.numero_documento,
                         nombreExcel: importAppointmentDto.paciente,
-                        nombreSistema: patientExist.nombre
+                        nombreSistema: patientExist.nombre,
+                        motivo: `El nombre del paciente en el archivo Ecxel no coincide con su # identificación en nuestra Base de Datos  ${importAppointmentDto.numero_documento}`
                     }
                 }
             }
@@ -149,6 +229,10 @@ export class AppointmentService {
         appointments.especialidad = importAppointmentDto.especialidad
         appointments.especialista = importAppointmentDto.especialista
         appointments.fecha_cita = importAppointmentDto.hora
+
+        appointments.codigo_turno = await this.generarCodigoTurno( 
+            appointments.especialidad, appointments.fecha_cita)
+
         appointments.observacion = importAppointmentDto.observacion
 
         appointments.patient = patients
@@ -156,6 +240,7 @@ export class AppointmentService {
 
         try {
         await appointments.save()
+        console.log('Cita guardada:', appointments)
         return{
             tipo: tipoPaciente
         }
@@ -166,17 +251,36 @@ export class AppointmentService {
     }
 
 
-    public async procesarExcel(file: Express.Multer.File, sesionUser: User){
+ //******PROCESOMIENTO MASIVO DE CARGUE DEL ACHIVO********** */
 
-        const filas = readExcel(file.buffer)
+    public async procesarExcel(file: Express.Multer.File, sesionUser: User, fechaAtencion: Date){
 
-        let citasCreadas = 0
-        let pacientesNuevos = 0
-        let pacientesExistentes = 0
-        const inconsistencias: any[] = []
+    const filas = readExcel(file.buffer)
 
-        for(const fila of filas){
-            console.log(fila)
+    let citasCreadas = 0
+    let pacientesNuevos = 0
+    let pacientesExistentes = 0
+    const inconsistencias: any[] = []
+    //Convertir el objeto fechaSeleccionada a string y luego escoger sus primero 10 caracteres YYYY-MM-DD   
+    const fechaSeleccionadaUser = fechaAtencion.toString().substring(0, 10)
+
+    for(const fila of filas){
+
+        const fechaCita = new Date(fila.hora)
+        const fechaExcel = this.darFormatoFecha(fechaCita) //Estandarizar las fechas de cada cita
+        const fechaSeleccionada = fechaSeleccionadaUser
+
+        if(fechaExcel !== fechaSeleccionada){
+
+            inconsistencias.push({
+                paciente: fila.paciente,
+                fechaSeleccionada: fechaSeleccionada,
+                fechaExcel: fechaExcel,
+                motivo: 'La fecha de la CITA no coincide con la fecha de ATENCIÓN seleccionada'
+            })
+
+        } else {
+
             const resultado = await this.importAppointments(fila, sesionUser)
 
             if(resultado.tipo == 'Nuevo'){
@@ -191,15 +295,17 @@ export class AppointmentService {
 
             if(resultado.tipo == 'Inconsistencia'){
                 inconsistencias.push(resultado.paciente)
-            }            
-        }
-        return{
-            citasCreadas,
-            pacientesNuevos,
-            pacientesExistentes,
-            inconsistencias
+            }
         }
     }
 
+    return {
+        citasCreadas,
+        pacientesNuevos,
+        pacientesExistentes,
+        inconsistencias
+    }
+}
+            
 
 }

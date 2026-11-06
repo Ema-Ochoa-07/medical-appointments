@@ -26,12 +26,14 @@ export class AppointmentRoutes{
         
         //RUTAS APPOINTEMENT
         router.post('', AuthMiddleware.protect,  controller.createAppointment)
-        router.get('/', controller.getAppointmets)
+        router.get('/', AuthMiddleware.protect, controller.getAppointmets)
         router.get('/:id', controller.getAppointmentId)
         router.delete('/:id',AuthMiddleware.protect, controller.deleteAppointmentId)
 
         router.post('/import', AuthMiddleware.protect, controller.importAppointments)
-        router.post('/procesar',uploadSingleExcel('file'), AuthMiddleware.protect, controller.procesarExcel)
+
+        router.post('/procesar',AuthMiddleware.protect, uploadSingleExcel('file'), controller.procesarExcel)
+        //router.post('/procesar', uploadSingleExcel('file'), controller.procesarExcel)
 
         return router
     }
